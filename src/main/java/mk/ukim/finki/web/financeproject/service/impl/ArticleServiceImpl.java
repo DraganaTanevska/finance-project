@@ -1,32 +1,29 @@
 package mk.ukim.finki.web.financeproject.service.impl;
 
 import mk.ukim.finki.web.financeproject.model.Article;
-import mk.ukim.finki.web.financeproject.model.Source;
+import mk.ukim.finki.web.financeproject.model.enumerations.Source;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
-import mk.ukim.finki.web.financeproject.model.exceptions.SourceNotFoundException;
 import mk.ukim.finki.web.financeproject.repository.ArticleRepository;
-import mk.ukim.finki.web.financeproject.repository.SourceRepository;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final SourceRepository sourceRepository;
 
-    public ArticleServiceImpl(ArticleRepository articleRepository, SourceRepository sourceRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
-        this.sourceRepository = sourceRepository;
     }
 
-    public List<Article> findAll(Date from, Date to, Long id) {
-        if(from==null&&to==null&&id==null)
+    public List<Article> findAll(Date from, Date to, Source source) {
+        if(from==null&&to==null&&source==null)
         return articleRepository.findAll();
-        else if(id!=null) {
-            Source source = sourceRepository.findById(id).orElseThrow(() -> new SourceNotFoundException(id));
+        else if(source!=null) {
             if(from!=null&&to!=null) {
                 return articleRepository.findArticlesByDateBetweenAndSource(from,to,source);
             }
