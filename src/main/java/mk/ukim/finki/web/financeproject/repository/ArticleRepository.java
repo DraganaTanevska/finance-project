@@ -1,7 +1,6 @@
 package mk.ukim.finki.web.financeproject.repository;
-
 import mk.ukim.finki.web.financeproject.model.Article;
-import mk.ukim.finki.web.financeproject.model.Source;
+import mk.ukim.finki.web.financeproject.model.enumerations.Source;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Date;

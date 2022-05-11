@@ -1,7 +1,8 @@
 package mk.ukim.finki.web.financeproject.web;
 
+import mk.ukim.finki.web.financeproject.model.enumerations.Source;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
-import mk.ukim.finki.web.financeproject.service.SourceService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,17 +15,14 @@ import java.util.Date;
 @RequestMapping("/article")
 public class ArticleController {
     private final ArticleService articleService;
-    private final SourceService sourceService;
 
-    public ArticleController(ArticleService articleService, SourceService sourceService) {
+    public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
-        this.sourceService = sourceService;
     }
 
     @GetMapping("/")
-    private String findAll(@RequestParam(required = false) Date from, @RequestParam(required = false) Date to, @RequestParam(required = false) Long sourceId, Model model) {
-        model.addAttribute("articles", articleService.findAll(from, to, sourceId));
-        model.addAttribute("sources", sourceService.findAll());
+    private String findAll(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to, @RequestParam(required = false) Source source, Model model) {
+        model.addAttribute("articles", articleService.findAll(from, to, source));
         return "home";
     }
 
