@@ -1,5 +1,4 @@
 package mk.ukim.finki.web.financeproject.repository;
-
 import mk.ukim.finki.web.financeproject.model.Article;
 import mk.ukim.finki.web.financeproject.model.Source;
 import org.springframework.data.jpa.repository.JpaRepository;

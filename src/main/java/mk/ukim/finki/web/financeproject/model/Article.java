@@ -2,9 +2,7 @@ package mk.ukim.finki.web.financeproject.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -16,7 +14,7 @@ public class Article {
     private String text;
     private String url;
     private Date date;
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private Source source;
     public Article(){}
 }
