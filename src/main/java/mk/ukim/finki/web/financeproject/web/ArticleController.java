@@ -28,7 +28,7 @@ public class ArticleController {
     private String findAll(@RequestParam(required = false) Date from, @RequestParam(required = false) Date to, @RequestParam(required = false) Long sourceId, Model model) {
         model.addAttribute("articles", articleService.findAll(from, to, sourceId));
         model.addAttribute("sources", sourceService.findAll());
-        return "home";
+        return "home.html";
     }
 
 }
