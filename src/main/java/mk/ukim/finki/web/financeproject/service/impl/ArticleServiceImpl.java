@@ -1,9 +1,8 @@
 package mk.ukim.finki.web.financeproject.service.impl;
 
 import mk.ukim.finki.web.financeproject.model.Article;
-import mk.ukim.finki.web.financeproject.model.Source;
+import mk.ukim.finki.web.financeproject.model.enumerations.Source;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
-import mk.ukim.finki.web.financeproject.model.exceptions.SourceNotFoundException;
 import mk.ukim.finki.web.financeproject.repository.ArticleRepository;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
 import org.springframework.stereotype.Service;

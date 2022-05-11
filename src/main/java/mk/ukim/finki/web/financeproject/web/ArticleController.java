@@ -1,6 +1,6 @@
 package mk.ukim.finki.web.financeproject.web;
 
-import mk.ukim.finki.web.financeproject.model.Source;
+import mk.ukim.finki.web.financeproject.model.enumerations.Source;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;

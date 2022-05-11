@@ -1,6 +1,7 @@
 package mk.ukim.finki.web.financeproject.model;
 
 import lombok.Data;
+import mk.ukim.finki.web.financeproject.model.enumerations.Source;
 
 import javax.persistence.*;
 import java.util.Date;
