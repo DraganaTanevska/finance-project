@@ -23,7 +23,7 @@ public class ArticleController {
     @GetMapping("/")
     private String findAll(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to, @RequestParam(required = false) Source source, Model model) {
         model.addAttribute("articles", articleService.findAll(from, to, source));
-        return "home";
+        return "home.html";
     }
 
 }

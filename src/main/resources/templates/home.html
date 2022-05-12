@@ -17,9 +17,9 @@
             crossorigin="anonymous">
     <script>
         function clickFunction(ime){
-            pocetnoIme=document.getElementById("Name")
+            pocetnoIme=document.getElementById("ime")
             pocetnoIme.innerText = ime.innerText
-
+            document.getElementById("hiddenEl").value=ime.innerText
         }
     </script>
 </head>
@@ -48,37 +48,36 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     </div>
     <br>
     <div class="ms-4">
+        <form method="get" th:action="@{/article/}">
         <div class="row">
-
-
             <div class="col-3">
+
                 <h4><span class="badge bg-secondary w-100">Filter by source:</span></h4>
                 <div class="dropdown">
-                    <a id="Name" class="btn color-white dropdown-toggle w-100" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                        Api
+                    <a id="ime" class="btn color-white dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                       Source
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li><a onclick="clickFunction(this)" class="dropdown-item" href="#">Twitter</a></li>
-                        <li><a onclick="clickFunction(this)" class="dropdown-item" href="#">Reddit</a></li>
-                        <li><a onclick="clickFunction(this)" class="dropdown-item" href="#">GDE</a></li>
+                        <th:block th:each="enum : ${T(mk.ukim.finki.web.financeproject.model.enumerations.Source).values()}">
+                        <li id="lista"><a id="enumName" th:value="${enum}" th:text="${enum}" onclick="clickFunction(this)" class="dropdown-item"></a></li>
+                        </th:block>
                     </ul>
                 </div>
             </div>
-            <div class="col-3"> <h4><span class="badge bg-secondary w-100">Date from:</span></h4><h5><input class="text-center" id="calendar" type="datetime-local"></h5></div>
-            <div class="col-3"> <h4><span class="badge bg-secondary w-100">Date to:</span></h4> <h5><input class="text-center" id="calendar" type="datetime-local"></h5></div>
+            <div class="col-3"> <h4><span class="badge bg-secondary w-100">Date from:</span></h4><h5><input name="from" class="text-center" id="calendar" type="datetime-local"></h5></div>
+            <div class="col-3"> <h4><span class="badge bg-secondary w-100">Date to:</span></h4> <h5><input name="to" class="text-center" id="calendar" type="datetime-local"></h5></div>
 
             <div class="col-3">
                 <h4><span class="badge bg-secondary w-100">URL</span></h4>
                 <input type="text" class="form-control">
-
             </div>
         </div>
-
-
         <br>
         <div class="row ">
-            <input class="btn btn-success" type="button" value="Filter">
+            <input type="hidden" name="source" id="hiddenEl">
+            <input class="btn btn-success" type="submit" value="Filter">
         </div>
+        </form>
         <br>
         <div class="row d-flex justify-content-center">
             <div class="col-lg-5 bg-light ms-lg-8 text-center w-100">
@@ -86,21 +85,19 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                     <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">API</th>
                         <th scope="col">Title</th>
                         <th scope="col">Text</th>
                         <th scope="col">Date</th>
-                        <th scope="col">Url</th>
+                        <th scope="col">Source</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Twitter</td>
-                        <td>Title</td>
-                        <td>Text</td>
-                        <td>01.01.2022</td>
-                        <td>Twitter</td>
+                    <tr th:each="data : ${articles}">
+                        <th th:text="${data.id}" scope="row"></th>
+                        <td th:text="${data.title}">Title</td>
+                        <td th:text="${data.text}" class="text-start">Text</td>
+                        <td th:text="${data.date}">01.01.2022</td>
+                        <td th:text="${data.source}">Twitter</td>
                     </tr>
                     </tbody>
                 </table>
@@ -111,7 +108,7 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             <div class="vl">
                 <div id="title">
                     <h3>Title</h3>
-                    <img src="../images/download.png" width="100px" height="50px">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Twitter-logo.svg" width="100px" height="50px">
                 </div>
                 <br>
                 <div class="col-sm-4 text-break" id="description">
@@ -121,16 +118,21 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                     <button class="btn btn-success">View More</button>
                 </div>
             </div>
-            <div class="vl">
+            <div th:each="data : ${articles} " class="vl">
                 <div id="title">
-                    <h3>Title</h3>
-                    <img src="../images/Reddit_logo_new.svg.png" width="150px" height="50px">
+                    <h3 th:text="${data.title}"></h3>
+                    <img src="https://play-lh.googleusercontent.com/MDRjKWEIHO9cGiWt-tlvOGpAP3x14_89jwAT-nQTS6Fra-gxfakizwJ3NHBTClNGYK4" width="150px" height="50px">
                 </div>
                 <br>
-                <div class="col-sm-4 text-break" id="description">
-                    TextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextTextText
+                <div th:text="${data.text}" class="col-sm-12" id="description">
+
                 </div>
                 <div>
+                    <div th:text="${data.source}">
+                    </div>
+                    <div th:text="${data.date}">
+
+                    </div>
                     <button class="btn btn-success">View More</button>
                 </div>
             </div>
