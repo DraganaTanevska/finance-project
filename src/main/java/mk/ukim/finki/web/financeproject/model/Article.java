@@ -7,9 +7,12 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Data
-@Entity
+@Entity()
+@Table(name="api_data")
 public class Article {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "index")
     private Long id;
     private String title;
     private String text;
