@@ -1,7 +1,9 @@
 package mk.ukim.finki.web.financeproject.service.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import mk.ukim.finki.web.financeproject.model.Article;
-import mk.ukim.finki.web.financeproject.model.enumerations.Source;
+import mk.ukim.finki.web.financeproject.model.QArticle;
+import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
 import mk.ukim.finki.web.financeproject.repository.ArticleRepository;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
@@ -20,39 +22,37 @@ public class ArticleServiceImpl implements ArticleService {
         this.articleRepository = articleRepository;
     }
 
-    public List<Article> findAll(Date from, Date to, Source source) {
-        if(from==null&&to==null&&source==null)
-        return articleRepository.findAll();
-        else if(source!=null) {
-            if(from!=null&&to!=null) {
-                return articleRepository.findArticlesByDateBetweenAndSource(from,to,source);
-            }
-            else if(from!=null) {
-                return articleRepository.findArticlesByDateAfterAndSource(from,source);
-            }
-            else if(to!=null){
-                return articleRepository.findArticlesByDateBeforeAndSource(to,source);
-            }
-            else
-                return articleRepository.findArticlesBySource(source);
-        }
-        else if(from!=null){
-            if(to!=null)
-                return articleRepository.findArticlesByDateBetween(from,to);
-            else
-                return articleRepository.findArticlesByDateAfter(from);
-        }
-        else
-            return articleRepository.findArticlesByDateBefore(to);
+    public List<Article> findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels) {
+        QArticle article = QArticle.article;
+        BooleanBuilder filter = new BooleanBuilder();
 
+        if (from != null) {
+            filter.and(article.date.after(from));
+        }
+
+        if (to != null) {
+            filter.and(article.date.before(to));
+        }
+
+        if (sourceApi != null) {
+            filter.and(article.sourceApi.eq(sourceApi));
+        }
+
+        if (sentiment != null && !sentiment.equals("")) {
+            filter.and(article.sentiment.eq(sentiment));
+        }
+
+        if (entityLabels != null) {
+            for (String label : entityLabels) {
+                filter.and(article.namedEntitiesList.any().label.eq(label));
+            }
+        }
+
+        return articleRepository.findAll(filter);
     }
-
 
     @Override
     public Optional<Article> findById(Long id) {
-        return Optional.of(articleRepository.findById(id).orElseThrow(()->new ArticleNotFoundException(id)));
+        return Optional.of(articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id)));
     }
-
-
-
 }

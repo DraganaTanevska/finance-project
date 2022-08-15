@@ -1,6 +1,6 @@
 package mk.ukim.finki.web.financeproject.model.enumerations;
 
-public enum Source {
+public enum SourceApi {
     YahooNewsApiRequest,
     GoogleNewsApiRequest,
     TwitterApiRequest,
@@ -9,4 +9,4 @@ public enum Source {
     RedditApiRequestPushshift,
     NewsApiRequest,
     GdeApiRequest,
-    }
+}
