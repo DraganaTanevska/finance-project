@@ -6,6 +6,7 @@ import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
 import mk.ukim.finki.web.financeproject.service.NamedEntityService;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,7 +30,7 @@ public class ArticleController {
         this.namedEntityService = namedEntityService;
     }
 
-    @GetMapping(value = {"/", "/home"})
+    @GetMapping(value = {"/{page}", "/home/{page}"})
     private String findAll(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to,
@@ -38,6 +39,7 @@ public class ArticleController {
             @RequestParam(required = false) List<String> entityLabels,
             @RequestParam(required = false) String specificEntityLabel,
             @RequestParam(required = false) String specificEntityWord,
+            @PathVariable Integer page,
             Model model
     ) {
         SpecificEntity specificEntity = null;
@@ -46,12 +48,12 @@ public class ArticleController {
             specificEntity = new SpecificEntity(specificEntityLabel, specificEntityWord);
         }
 
-        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, specificEntity)
-                .stream()
-                .limit(10)
-                .collect(Collectors.toList());
-        // TODO: 15.08.2022 fix pagination instead of limit(10) :D
-
+        if(page==null || page<1)
+        {
+            page=1;
+        }
+        Page<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, specificEntity, page);
+        // TODO: 16.8.2022 if you have filter and then change the page, the filters are lost. Solve it   
         model.addAttribute("articles", articles);
         model.addAttribute("namedEntities", namedEntityService.getAllEntities());
         return "home";

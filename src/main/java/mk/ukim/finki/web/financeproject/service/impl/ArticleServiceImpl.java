@@ -11,6 +11,9 @@ import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundExceptio
 import mk.ukim.finki.web.financeproject.repository.ArticleRepository;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
 import mk.ukim.finki.web.financeproject.service.NamedEntityService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,7 +31,7 @@ public class ArticleServiceImpl implements ArticleService {
         this.namedEntityService = namedEntityService;
     }
 
-    public List<Article> findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels, SpecificEntity specificEntity) {
+    public Page<Article> findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels, SpecificEntity specificEntity, int page) {
         QArticle article = QArticle.article;
         BooleanBuilder filter = new BooleanBuilder();
 
@@ -64,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
             filter.and(article.namedEntitiesList.any().in(entities));
         }
 
-        return articleRepository.findAll(filter);
+        return articleRepository.findAll(filter, PageRequest.of(page, 10));
     }
 
     @Override
