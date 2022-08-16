@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        .vl {
+            border-left: 4px solid black;
+            height: auto;
+        }
+    </style>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet" integrity="sha384-
+1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous">
+    <script>
+        window.onload = function(){
+            for(i=0;i<document.getElementsByClassName("col-sm-12").length;i++)
+            {
+                if(document.getElementsByClassName("col-sm-12")[i].innerText.length > 250)
+                {
+                    var str = document.getElementsByClassName("col-sm-12")[i].innerText.slice(0,250)
+                    document.getElementsByClassName("col-sm-12")[i].innerText = str + "..."
+                }
+            }
+
+
+        }
+        function clickFunction(ime){
+            pocetnoIme=document.getElementById("ime")
+            pocetnoIme.innerText = ime.innerText
+            document.getElementById("hiddenEl").value=ime.innerText
+        }
+    </script>
+</head>
+<body>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js
+" integrity="sha384-
+ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"
+>
+</script>
+<div class="row">
+    <div class="navbar navbar-dark bg-dark ">
+        <div class="col-sm-4 d-flex justify-content-center">
+            <a href="/article/home"><button class="btn btn-light ">Home</button></a>
+        </div>
+    </div>
+</div>
+<br>
+
+<br>
+<div class="container-sm">
+    <div class="row">
+        <h4>Dashboard</h4>
+    </div>
+    <br>
+    <div class="ms-4">
+        <form method="get" th:action="@{/article/}">
+            <div class="row mb-4">
+                <div class="col-3">
+                    <h4><span class="badge bg-secondary w-100">Filter by api:</span></h4>
+                    <div class="dropdown">
+                        <a id="ime" class="btn color-white dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" style="border: 1px solid #ced4da;" aria-expanded="false">
+                           Api
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <th:block th:each="enum : ${T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).values()}">
+                            <li id="lista"><a id="enumName" th:value="${enum}" th:text="${enum}" onclick="clickFunction(this)" class="dropdown-item"></a></li>
+                            </th:block>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <h4><span class="badge bg-secondary w-100">Sentiment</span></h4>
+                    <select class="form-select" name="sentiment">
+                        <option value="" selected>filter by sentiment</option>
+                        <option value="Positive">Positive</option>
+                        <option value="Neutral">Neutral</option>
+                        <option value="Negative">Negative</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <h4><span class="badge bg-secondary w-100">Entity</span></h4>
+                    <div class="d-flex">
+                        <select class="form-select w-75" name="specificEntityLabel">
+                            <option value="" selected>Entity</option>
+                            <option th:each="entity : ${namedEntities}" th:value="${entity}" th:text="${entity}"></option>
+                        </select>
+                        <input type="text" class="form-control ms-1" name="specificEntityWord">
+                    </div>
+
+                </div>
+                <div class="col-3">
+                    <h4><span class="badge bg-secondary w-100">Date from:</span></h4>
+                    <div>
+                        <div>
+                            <labeL style="width:15%">from</labeL>
+                            <input name="from" class="text-center w-75 h5" id="calendar" type="datetime-local">
+                        </div>
+                        <div>
+                            <labeL style="width:15%">to  </labeL>
+                            <input name="to" class="text-center w-75 h5" id="calendar" type="datetime-local">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex;flex-wrap: wrap;justify-content: space-around;">
+                <div class="form-check" th:each="entity : ${namedEntities}"  style="padding: 5px; margin: 5px 25px;">
+                    <input name="entityLabels" class="form-check-input" type="checkbox" th:value="${entity}" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault" th:text="${entity}"></label>
+                </div>
+            </div>
+            <div class="row">
+                <input type="hidden" name="sourceApi" id="hiddenEl">
+                <input class="btn bg-secondary text-light" type="submit" value="Filter">
+            </div>
+
+        </form>
+        <br>
+        <div class="row d-flex justify-content-center">
+            <div class="col-lg-5 bg-light ms-lg-8 text-center w-100">
+
+            </div>
+        </div>
+        <div class="row">
+            <div th:each="data : ${articles} "class="vl">
+                <div id="title">
+                    <span>
+                        <span class="icon">
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).RedditApiRequest}">
+                            <img  src="https://play-lh.googleusercontent.com/MDRjKWEIHO9cGiWt-tlvOGpAP3x14_89jwAT-nQTS6Fra-gxfakizwJ3NHBTClNGYK4" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).RedditApiRequestPushshift}">
+                            <img  src="https://play-lh.googleusercontent.com/MDRjKWEIHO9cGiWt-tlvOGpAP3x14_89jwAT-nQTS6Fra-gxfakizwJ3NHBTClNGYK4" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).GoogleNewsApiRequest}">
+                            <img  src="https://upload.wikimedia.org/wikipedia/commons/3/33/Google_News.png?20211029151451" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).RapidApiGoogleNews}">
+                            <img  src="https://upload.wikimedia.org/wikipedia/commons/3/33/Google_News.png?20211029151451" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).TwitterApiRequest}">
+                            <img  src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Twitter-logo.svg/2491px-Twitter-logo.svg.png" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).YahooNewsApiRequest}">
+                            <img  src="https://logos-download.com/wp-content/uploads/2021/01/Yahoo_News_Logo_white_text.png" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).NewsApiRequest}">
+                            <img  src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2Fs3.amazonaws.com%2Fappforest_uf%2Ff1479799611909x580051703844219400%2Fnews_api_logo.PNG?w=&h=&auto=compress&dpr=1&fit=max" height="50px">
+                        </span>
+
+                        <span th:if="${data.sourceApi == T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).GdeApiRequest}">
+                            <img  src="data:image/jpeg;base64,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" height="50px">
+                        </span>
+                    </span>
+
+                        <th:block th:switch="${data.sentiment}">
+                            <span th:case="'Positive'">
+                                <span type="button" class="btn btn-success">Positive</span>
+                            </span>
+                            <span th:case="'Negative'">
+                                <span type="button" class="btn btn-danger">Negative</span>
+                            </span>
+                            <span th:case="'Neutral'">
+                                <span type="button" class="btn btn-light">Neutral</span>
+                            </span>
+                        </th:block>
+
+                        <span th:each="entity : ${data.namedEntitiesList}">
+                            <span class="btn btn-info" th:text="${entity.word}">
+                                <span class="tooltiptext" th:text="${entity.label}"></span>
+                            </span>
+                        </span>
+                    </span>
+                    <a th:href="${data.url}"><h3 th:text="${data.title}"></h3></a>
+                </div>
+                <br>
+                <div th:text="${data.text}" class="col-sm-12">
+
+                </div>
+                <div>
+                    <div th:text="${'Request: ' + data.sourceApi}">
+                    </div>
+                    <div th:text="${'Date: '+ data.date}">
+
+                    </div>
+                    <a th:href="@{'/article/onearticle/' + ${data.id}}"><button class="btn btn-success">View More</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

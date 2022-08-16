@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OneArticle</title>
+</head>
+<body>
+<div class="container-sm">
+    <div class="row">
+        <div th:each="data : ${article} " class="vl">
+            <div id="title">
+                <h3 th:text="${data.title}"></h3>
+                <img src="https://play-lh.googleusercontent.com/MDRjKWEIHO9cGiWt-tlvOGpAP3x14_89jwAT-nQTS6Fra-gxfakizwJ3NHBTClNGYK4" width="150px" height="50px">
+            </div>
+            <br>
+            <div th:text="${data.text}" class="col-sm-12" id="description">
+
+            </div>
+            <div>
+                <div th:text="${data.sourceApi}">
+                </div>
+                <div th:text="${data.date}">
+                </div>
+                <a th:href="@{'/article/onearticle/' + ${data.id}}"><button class="btn btn-success">View More</button></a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
