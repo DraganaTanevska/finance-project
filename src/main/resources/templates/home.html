@@ -60,13 +60,12 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     <br>
     <div class="ms-4">
         <form method="get" th:action="@{/article/}">
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col-3">
-
-                    <h4><span class="badge bg-secondary w-100">Filter by sourceApi:</span></h4>
+                    <h4><span class="badge bg-secondary w-100">Filter by api:</span></h4>
                     <div class="dropdown">
-                        <a id="ime" class="btn color-white dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           Source
+                        <a id="ime" class="btn color-white dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" style="border: 1px solid #ced4da;" aria-expanded="false">
+                           Api
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <th:block th:each="enum : ${T(mk.ukim.finki.web.financeproject.model.enumerations.SourceApi).values()}">
@@ -75,11 +74,8 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                         </ul>
                     </div>
                 </div>
-                <div class="col-3"> <h4><span class="badge bg-secondary w-100">Date from:</span></h4><h5><input name="from" class="text-center" id="calendar" type="datetime-local"></h5></div>
-                <div class="col-3"> <h4><span class="badge bg-secondary w-100">Date to:</span></h4> <h5><input name="to" class="text-center" id="calendar" type="datetime-local"></h5></div>
-
                 <div class="col-3">
-                    <h4><span class="badge bg-secondary w-100">sentiment</span></h4>
+                    <h4><span class="badge bg-secondary w-100">Sentiment</span></h4>
                     <select class="form-select" name="sentiment">
                         <option value="" selected>filter by sentiment</option>
                         <option value="Positive">Positive</option>
@@ -87,18 +83,37 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                         <option value="Negative">Negative</option>
                     </select>
                 </div>
-            </div>
+                <div class="col-3">
+                    <h4><span class="badge bg-secondary w-100">Entity</span></h4>
+                    <div class="d-flex">
+                        <select class="form-select w-75" name="specificEntityLabel">
+                            <option value="" selected>Entity</option>
+                            <option th:each="entity : ${namedEntities}" th:value="${entity}" th:text="${entity}"></option>
+                        </select>
+                        <input type="text" class="form-control ms-1" name="specificEntityWord">
+                    </div>
 
-            <div style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: space-around;">
+                </div>
+                <div class="col-3">
+                    <h4><span class="badge bg-secondary w-100">Date from:</span></h4>
+                    <div>
+                        <div>
+                            <labeL style="width:15%">from</labeL>
+                            <input name="from" class="text-center w-75 h5" id="calendar" type="datetime-local">
+                        </div>
+                        <div>
+                            <labeL style="width:15%">to  </labeL>
+                            <input name="to" class="text-center w-75 h5" id="calendar" type="datetime-local">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex;flex-wrap: wrap;justify-content: space-around;">
                 <div class="form-check" th:each="entity : ${namedEntities}"  style="padding: 5px; margin: 5px 25px;">
                     <input name="entityLabels" class="form-check-input" type="checkbox" th:value="${entity}" id="flexCheckDefault">
                     <label class="form-check-label" for="flexCheckDefault" th:text="${entity}"></label>
                 </div>
             </div>
-
             <div class="row">
                 <input type="hidden" name="sourceApi" id="hiddenEl">
                 <input class="btn bg-secondary text-light" type="submit" value="Filter">
@@ -161,7 +176,7 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                             </span>
                         </th:block>
 
-                        <span th:each="entity : ${data.namedEntitiesList} ">
+                        <span th:each="entity : ${data.namedEntitiesList}">
                             <span class="btn btn-info" th:text="${entity.word}">
                                 <span class="tooltiptext" th:text="${entity.label}"></span>
                             </span>

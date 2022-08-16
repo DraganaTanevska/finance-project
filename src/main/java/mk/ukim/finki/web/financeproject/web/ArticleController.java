@@ -1,6 +1,7 @@
 package mk.ukim.finki.web.financeproject.web;
 
 import mk.ukim.finki.web.financeproject.model.Article;
+import mk.ukim.finki.web.financeproject.model.dto.SpecificEntity;
 import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
@@ -35,9 +36,17 @@ public class ArticleController {
             @RequestParam(required = false) SourceApi sourceApi,
             @RequestParam(required = false) String sentiment,
             @RequestParam(required = false) List<String> entityLabels,
+            @RequestParam(required = false) String specificEntityLabel,
+            @RequestParam(required = false) String specificEntityWord,
             Model model
     ) {
-        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels)
+        SpecificEntity specificEntity = null;
+
+        if (specificEntityLabel != null && specificEntityWord != null && !specificEntityLabel.equals("") && !specificEntityWord.equals("") ) {
+            specificEntity = new SpecificEntity(specificEntityLabel, specificEntityWord);
+        }
+
+        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, specificEntity)
                 .stream()
                 .limit(10)
                 .collect(Collectors.toList());

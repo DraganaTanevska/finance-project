@@ -1,5 +1,7 @@
 package mk.ukim.finki.web.financeproject.service;
 
+import com.querydsl.core.types.Predicate;
+import mk.ukim.finki.web.financeproject.model.NamedEntities;
 import mk.ukim.finki.web.financeproject.repository.NamedEntityRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +18,9 @@ public class NamedEntityService {
 
     public List<String> getAllEntities() {
         return namedEntityRepository.getAllEntities();
+    }
+
+    public List<NamedEntities> getNamedEntities(Predicate predicate) {
+        return namedEntityRepository.findAll(predicate);
     }
 }
