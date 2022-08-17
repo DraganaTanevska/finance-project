@@ -193,8 +193,16 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                     </div>
                     <div th:text="${'Date: '+ data.date}">
 
+
                     </div>
+                    <div th:text="${'Our model predicted:' + data.sentiment + ' article'}"></div>
                     <a th:href="@{'/article/onearticle/' + ${data.id}}"><button class="btn btn-success">View More</button></a>
+<!--                    <div th:if="${Article.totalPages > 0}" class="pagination"-->
+<!--                         th:each="pageNumber : ${pageNumbers}">-->
+<!--                        <a th:href="@{/article/(size=${Article.size}, page=${pageNumber})}"-->
+<!--                           th:text=${pageNumber}-->
+<!--                           th:class="${pageNumber==Article.number + 1} ? active"></a>-->
+                    </div>
                 </div>
             </div>
         </div>

@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/article")
 public class ArticleController {
+
     private final ArticleService articleService;
     private final NamedEntityService namedEntityService;
 
@@ -58,9 +59,9 @@ public class ArticleController {
     }
 
     @GetMapping("/onearticle/{id}")
-    private String findOne(@PathVariable Long id, Model model) {
-        model.addAttribute("article", articleService.findById(id).orElseThrow(() -> new ArticleNotFoundException(id)));
-        return "oneArticle";
+    private String findOne(@PathVariable Long id,Model model){
+        articleService.findById(id).ifPresent(o -> model.addAttribute("article",o));
+        return "oneArticle.html";
     }
 
 }

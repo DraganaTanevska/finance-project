@@ -1,6 +1,8 @@
 package mk.ukim.finki.web.financeproject.service;
 
 import mk.ukim.finki.web.financeproject.model.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import mk.ukim.finki.web.financeproject.model.dto.SpecificEntity;
 import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 
