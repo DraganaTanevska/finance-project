@@ -1,28 +1,30 @@
 package mk.ukim.finki.web.financeproject.model;
 
 import lombok.Data;
-import mk.ukim.finki.web.financeproject.model.enumerations.Source;
+import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Data
-@Entity()
-@Table(name="api_data_with_sentiment")
+@Entity
+
+@Table(name = "api_data_with_sentiment2")
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Long id;
     private String title;
     private String text;
     private String url;
     private Date date;
+
     @Enumerated(EnumType.STRING)
-    private Source source;
+    @Column(name = "source")
+    private SourceApi sourceApi;
     private String sentiment;
-    @OneToMany
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "news")
     private List<NamedEntities> namedEntitiesList;
-    public Article(){}
 }

@@ -6,15 +6,15 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "")
+@Table(name = "named_entities2")
 public class NamedEntities {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Long id;
-    private Long id_news;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_news")
+    private Article news;
     private String label;
     private String word;
-    public NamedEntities() {
-    }
 }
