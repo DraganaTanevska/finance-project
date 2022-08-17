@@ -29,7 +29,7 @@ public class ArticleController {
         this.namedEntityService = namedEntityService;
     }
 
-    @GetMapping(value = {"/", "/home"})
+    @GetMapping(value = {"/{page}", "/home/{page}"})
     private String findAll(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date to,
@@ -38,6 +38,7 @@ public class ArticleController {
             @RequestParam(required = false) List<String> entityLabels,
             @RequestParam(required = false) String specificEntityLabel,
             @RequestParam(required = false) String specificEntityWord,
+            @PathVariable Integer page,
             Model model
     ) {
         EntityFilterDto entityFilterDto = null;
@@ -46,7 +47,7 @@ public class ArticleController {
             entityFilterDto = new EntityFilterDto(specificEntityLabel, specificEntityWord);
         }
 
-        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, entityFilterDto);
+        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, entityFilterDto, page);
 
         int positiveCount = (int) articles.stream().filter(x->x.getSentiment().equals("Positive")).count();
         int negativeCount = (int) articles.stream().filter(x->x.getSentiment().equals("Negative")).count();
@@ -69,5 +70,4 @@ public class ArticleController {
         model.addAttribute("article", articleService.findById(id).orElseThrow(() -> new ArticleNotFoundException(id)));
         return "oneArticle";
     }
-
 }
