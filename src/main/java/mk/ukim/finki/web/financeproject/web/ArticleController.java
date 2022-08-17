@@ -1,7 +1,7 @@
 package mk.ukim.finki.web.financeproject.web;
 
 import mk.ukim.finki.web.financeproject.model.Article;
-import mk.ukim.finki.web.financeproject.model.dto.SpecificEntity;
+import mk.ukim.finki.web.financeproject.model.dto.EntityFilterDto;
 import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
@@ -40,19 +40,26 @@ public class ArticleController {
             @RequestParam(required = false) String specificEntityWord,
             Model model
     ) {
-        SpecificEntity specificEntity = null;
+        EntityFilterDto entityFilterDto = null;
 
-        if (specificEntityLabel != null && specificEntityWord != null && !specificEntityLabel.equals("") && !specificEntityWord.equals("") ) {
-            specificEntity = new SpecificEntity(specificEntityLabel, specificEntityWord);
+        if (specificEntityLabel != null && specificEntityWord != null && (!specificEntityLabel.equals("") || !specificEntityWord.equals("")) ) {
+            entityFilterDto = new EntityFilterDto(specificEntityLabel, specificEntityWord);
         }
 
-        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, specificEntity)
-                .stream()
+        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, entityFilterDto);
+
+        int positiveCount = (int) articles.stream().filter(x->x.getSentiment().equals("Positive")).count();
+        int negativeCount = (int) articles.stream().filter(x->x.getSentiment().equals("Negative")).count();
+        int neutralCount = (int) articles.stream().filter(x->x.getSentiment().equals("Neutral")).count();
+
+        String pieChartData = articleService.getJsonPieChartSentimentData(positiveCount, negativeCount, neutralCount);
+
+        articles = articles.stream()
                 .limit(10)
                 .collect(Collectors.toList());
-        // TODO: 15.08.2022 fix pagination instead of limit(10) :D
 
         model.addAttribute("articles", articles);
+        model.addAttribute("pieChartData", pieChartData);
         model.addAttribute("namedEntities", namedEntityService.getAllEntities());
         return "home";
     }

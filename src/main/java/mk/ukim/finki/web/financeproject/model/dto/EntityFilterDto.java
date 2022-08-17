@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class SpecificEntity {
+public class EntityFilterDto {
     private final String specificEntityLabel;
     private final String specificEntityWord;
 }

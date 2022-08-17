@@ -10,12 +10,53 @@
         }
     </style>
 
+    <style>
+        .tooltip1 {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tooltip1 .tooltiptext1 {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
+
+        .tooltip1:hover .tooltiptext1 {
+            visibility: visible;
+        }
+
+        #pieChart {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-            rel="stylesheet" integrity="sha384-
-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
             crossorigin="anonymous">
-    <script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+    <script th:inline="javascript">
+        function showChart() {
+            //pie
+            console.log("run")
+            var ctxP = document.getElementById("pieChart").getContext('2d');
+
+            const data = [(${pieChartData})];
+
+            var myPieChart = new Chart(ctxP, data);
+        }
+
         window.onload = function(){
             for(i=0;i<document.getElementsByClassName("col-sm-12").length;i++)
             {
@@ -25,6 +66,8 @@
                     document.getElementsByClassName("col-sm-12")[i].innerText = str + "..."
                 }
             }
+
+            showChart()
 
 
         }
@@ -118,14 +161,14 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                 <input type="hidden" name="sourceApi" id="hiddenEl">
                 <input class="btn bg-secondary text-light" type="submit" value="Filter">
             </div>
-
         </form>
         <br>
         <div class="row d-flex justify-content-center">
-            <div class="col-lg-5 bg-light ms-lg-8 text-center w-100">
-
-            </div>
+            <div class="col-lg-5 bg-light ms-lg-8 text-center w-100"/>
         </div>
+
+        <canvas id="pieChart"></canvas>
+
         <div class="row">
             <div th:each="data : ${articles} "class="vl">
                 <div id="title">
@@ -177,8 +220,9 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                         </th:block>
 
                         <span th:each="entity : ${data.namedEntitiesList}">
-                            <span class="btn btn-info" th:text="${entity.word}">
-                                <span class="tooltiptext" th:text="${entity.label}"></span>
+                            <span class="btn btn-info tooltip1">
+                                <span th:text="${entity.word}"></span>
+                                <span class="tooltiptext1" th:text="${entity.label}"></span>
                             </span>
                         </span>
                     </span>
