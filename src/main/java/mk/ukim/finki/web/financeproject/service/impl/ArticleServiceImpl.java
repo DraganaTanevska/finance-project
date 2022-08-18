@@ -88,7 +88,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         String sentimentPieChartJson = getJsonPieChartSentimentData(sentimentCount);
 
-        Page<Article> pageToDisplay = articleRepository.findAll(filter, PageRequest.of(page-1, 10));
+        Page<Article> pageToDisplay = articleRepository.findAll(filter, PageRequest.of(page-1, 9));
 
         FilterArticleDto filterArticleDto = new FilterArticleDto(pageToDisplay, sentimentPieChartJson);
 
