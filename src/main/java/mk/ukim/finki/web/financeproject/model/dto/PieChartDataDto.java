@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class PieChartDataDto {
     private String label;
-    private Integer value;
+    private Long value;
     private String backgroundColor;
     private String hoverBackgroundColor;
 }

@@ -2,10 +2,12 @@ package mk.ukim.finki.web.financeproject.web;
 
 import mk.ukim.finki.web.financeproject.model.Article;
 import mk.ukim.finki.web.financeproject.model.dto.EntityFilterDto;
+import mk.ukim.finki.web.financeproject.model.dto.FilterArticleDto;
 import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
 import mk.ukim.finki.web.financeproject.service.NamedEntityService;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/article")
@@ -39,6 +41,7 @@ public class ArticleController {
             @RequestParam(required = false) String specificEntityLabel,
             @RequestParam(required = false) String specificEntityWord,
             @PathVariable Integer page,
+            HttpServletRequest request,
             Model model
     ) {
         EntityFilterDto entityFilterDto = null;
@@ -47,21 +50,19 @@ public class ArticleController {
             entityFilterDto = new EntityFilterDto(specificEntityLabel, specificEntityWord);
         }
 
-        List<Article> articles = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, entityFilterDto, page);
+        FilterArticleDto filterArticleDto = articleService.findAll(from, to, sourceApi, sentiment, entityLabels, entityFilterDto, page);
 
-        int positiveCount = (int) articles.stream().filter(x->x.getSentiment().equals("Positive")).count();
-        int negativeCount = (int) articles.stream().filter(x->x.getSentiment().equals("Negative")).count();
-        int neutralCount = (int) articles.stream().filter(x->x.getSentiment().equals("Neutral")).count();
+        Page<Article> articles = filterArticleDto.getArticlePage();
 
-        String pieChartData = articleService.getJsonPieChartSentimentData(positiveCount, negativeCount, neutralCount);
+        String pieChartData = filterArticleDto.getPieChartData();
 
-        articles = articles.stream()
-                .limit(10)
-                .collect(Collectors.toList());
+        String queryParams = request.getQueryString() != null ? request.getQueryString() : "";
 
         model.addAttribute("articles", articles);
         model.addAttribute("pieChartData", pieChartData);
         model.addAttribute("namedEntities", namedEntityService.getAllEntities());
+        model.addAttribute("queryParams", queryParams);
+
         return "home";
     }
 

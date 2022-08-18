@@ -17,7 +17,7 @@ public class PieChartFactory {
         PieChartData pieChartData = new PieChartData();
 
         List<String> labels = new ArrayList<>();
-        List<Integer> data = new ArrayList<>();
+        List<Long> data = new ArrayList<>();
         List<String> backgroundColors = new ArrayList<>();
         List<String> hoverBackgroundColor = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public class PieChartFactory {
         return pieChart;
     }
 
-    public static PieChart createPieChartSentiment(Integer positiveCount, Integer negativeCount, Integer neutralCount) {
+    public static PieChart createPieChartSentiment(Long positiveCount, Long negativeCount, Long neutralCount) {
         List<PieChartDataDto> dataDtos;
 
         PieChartDataDto redData = new PieChartDataDto();
@@ -66,7 +66,7 @@ public class PieChartFactory {
         greenData.setValue(positiveCount);
 
         PieChartDataDto greyData = new PieChartDataDto();
-        greyData.setLabel("Grey");
+        greyData.setLabel("Neutral");
         greyData.setBackgroundColor("#949FB1");
         greyData.setHoverBackgroundColor("#949FB1");
         greyData.setValue(neutralCount);

@@ -8,6 +8,7 @@ import mk.ukim.finki.web.financeproject.model.NamedEntities;
 import mk.ukim.finki.web.financeproject.model.QArticle;
 import mk.ukim.finki.web.financeproject.model.QNamedEntities;
 import mk.ukim.finki.web.financeproject.model.dto.EntityFilterDto;
+import mk.ukim.finki.web.financeproject.model.dto.FilterArticleDto;
 import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
 import mk.ukim.finki.web.financeproject.model.piechart.PieChart;
@@ -17,12 +18,13 @@ import mk.ukim.finki.web.financeproject.service.NamedEntityService;
 import mk.ukim.finki.web.financeproject.service.PieChartFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -35,7 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
         this.namedEntityService = namedEntityService;
     }
 
-    public List<Article> findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels, EntityFilterDto entityFilterDto, int page) {
+    public FilterArticleDto findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels, EntityFilterDto entityFilterDto, int page) {
         QArticle article = QArticle.article;
         BooleanBuilder filter = new BooleanBuilder();
 
@@ -79,11 +81,26 @@ public class ArticleServiceImpl implements ArticleService {
             filter.and(article.namedEntitiesList.any().in(entities));
         }
 
-        return articleRepository.findAll(filter, PageRequest.of(page, 10));
+        List<Article> articles = articleRepository.findAll(filter);
+        Map<String, Long> sentimentCount = articles
+                .stream()
+                .collect(Collectors.groupingBy(Article::getSentiment, Collectors.counting()));
+
+        String sentimentPieChartJson = getJsonPieChartSentimentData(sentimentCount);
+
+        Page<Article> pageToDisplay = articleRepository.findAll(filter, PageRequest.of(page-1, 10));
+
+        FilterArticleDto filterArticleDto = new FilterArticleDto(pageToDisplay, sentimentPieChartJson);
+
+        return filterArticleDto;
     }
 
-    public String getJsonPieChartSentimentData(Integer positiveCount, Integer negativeCount, Integer neutralCount) {
-        PieChart pieChart = PieChartFactory.createPieChartSentiment(positiveCount, negativeCount, neutralCount);
+    private String getJsonPieChartSentimentData(Map<String, Long> sentimentCount) {
+
+        PieChart pieChart = PieChartFactory.createPieChartSentiment(
+                sentimentCount.get("Positive"),
+                sentimentCount.get("Negative"),
+                sentimentCount.get("Neutral"));
 
         ObjectMapper objectMapper = new ObjectMapper();
 
