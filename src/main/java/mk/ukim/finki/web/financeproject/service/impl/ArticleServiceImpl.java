@@ -1,30 +1,30 @@
 package mk.ukim.finki.web.financeproject.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
 import mk.ukim.finki.web.financeproject.model.Article;
 import mk.ukim.finki.web.financeproject.model.NamedEntities;
 import mk.ukim.finki.web.financeproject.model.QArticle;
 import mk.ukim.finki.web.financeproject.model.QNamedEntities;
-import mk.ukim.finki.web.financeproject.model.dto.SpecificEntity;
+import mk.ukim.finki.web.financeproject.model.dto.EntityFilterDto;
+import mk.ukim.finki.web.financeproject.model.dto.FilterArticleDto;
 import mk.ukim.finki.web.financeproject.model.enumerations.SourceApi;
 import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundException;
+import mk.ukim.finki.web.financeproject.model.piechart.PieChart;
 import mk.ukim.finki.web.financeproject.repository.ArticleRepository;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import mk.ukim.finki.web.financeproject.service.NamedEntityService;
+import mk.ukim.finki.web.financeproject.service.PieChartFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -37,7 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
         this.namedEntityService = namedEntityService;
     }
 
-    public List<Article> findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels, SpecificEntity specificEntity) {
+    public FilterArticleDto findAll(Date from, Date to, SourceApi sourceApi, String sentiment, List<String> entityLabels, EntityFilterDto entityFilterDto, int page) {
         QArticle article = QArticle.article;
         BooleanBuilder filter = new BooleanBuilder();
 
@@ -63,17 +63,56 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
 
-        if (specificEntity != null) {
+        if (entityFilterDto != null) {
             QNamedEntities qNamedEntities = QNamedEntities.namedEntities;
 
-            List<NamedEntities> entities = namedEntityService.getNamedEntities(
-                    qNamedEntities.label.eq(specificEntity.getSpecificEntityLabel())
-                            .and(qNamedEntities.word.eq(specificEntity.getSpecificEntityWord())));
+            BooleanBuilder entityFilter = new BooleanBuilder();
+
+            if (!entityFilterDto.getSpecificEntityLabel().isEmpty()) {
+                entityFilter.and(qNamedEntities.label.eq(entityFilterDto.getSpecificEntityLabel()));
+            }
+
+            if (!entityFilterDto.getSpecificEntityWord().isEmpty()) {
+                entityFilter.and(qNamedEntities.word.eq(entityFilterDto.getSpecificEntityWord()));
+            }
+
+            List<NamedEntities> entities = namedEntityService.getNamedEntities(entityFilter);
 
             filter.and(article.namedEntitiesList.any().in(entities));
         }
 
-        return articleRepository.findAll(filter);
+        List<Article> articles = articleRepository.findAll(filter);
+        Map<String, Long> sentimentCount = articles
+                .stream()
+                .collect(Collectors.groupingBy(Article::getSentiment, Collectors.counting()));
+
+        String sentimentPieChartJson = getJsonPieChartSentimentData(sentimentCount);
+
+        Page<Article> pageToDisplay = articleRepository.findAll(filter, PageRequest.of(page-1, 9));
+
+        FilterArticleDto filterArticleDto = new FilterArticleDto(pageToDisplay, sentimentPieChartJson);
+
+        return filterArticleDto;
+    }
+
+    private String getJsonPieChartSentimentData(Map<String, Long> sentimentCount) {
+
+        PieChart pieChart = PieChartFactory.createPieChartSentiment(
+                sentimentCount.get("Positive"),
+                sentimentCount.get("Negative"),
+                sentimentCount.get("Neutral"));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String pieChartJson = null;
+
+        try {
+            pieChartJson = objectMapper.writeValueAsString(pieChart);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return pieChartJson;
     }
 
     @Override
@@ -81,4 +120,3 @@ public class ArticleServiceImpl implements ArticleService {
         return Optional.of(articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id)));
     }
 }
-
