@@ -220,7 +220,7 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                         </th:block>
 
                         <span th:each="entity : ${data.namedEntitiesList}">
-                            <span class="btn btn-info tooltip1">
+                            <span class="btn bg-dark text-light tooltip1 m-1">
                                 <span th:text="${entity.word}"></span>
                                 <span class="tooltiptext1" th:text="${entity.label}"></span>
                             </span>
@@ -241,11 +241,6 @@ ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
                     </div>
                     <div th:text="${'Our model predicted:' + data.sentiment + ' article'}"></div>
                     <a th:href="@{'/article/onearticle/' + ${data.id}}"><button class="btn btn-success">View More</button></a>
-<!--                    <div th:if="${Article.totalPages > 0}" class="pagination"-->
-<!--                         th:each="pageNumber : ${pageNumbers}">-->
-<!--                        <a th:href="@{/article/(size=${Article.size}, page=${pageNumber})}"-->
-<!--                           th:text=${pageNumber}-->
-<!--                           th:class="${pageNumber==Article.number + 1} ? active"></a>-->
                     </div>
                 </div>
             </div>
