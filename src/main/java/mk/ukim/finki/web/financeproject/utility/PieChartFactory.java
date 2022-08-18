@@ -1,4 +1,4 @@
-package mk.ukim.finki.web.financeproject.service;
+package mk.ukim.finki.web.financeproject.utility;
 
 import mk.ukim.finki.web.financeproject.model.dto.PieChartDataDto;
 import mk.ukim.finki.web.financeproject.model.piechart.Dataset;

@@ -14,8 +14,7 @@ import mk.ukim.finki.web.financeproject.model.exceptions.ArticleNotFoundExceptio
 import mk.ukim.finki.web.financeproject.model.piechart.PieChart;
 import mk.ukim.finki.web.financeproject.repository.ArticleRepository;
 import mk.ukim.finki.web.financeproject.service.ArticleService;
-import mk.ukim.finki.web.financeproject.service.NamedEntityService;
-import mk.ukim.finki.web.financeproject.service.PieChartFactory;
+import mk.ukim.finki.web.financeproject.utility.PieChartFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

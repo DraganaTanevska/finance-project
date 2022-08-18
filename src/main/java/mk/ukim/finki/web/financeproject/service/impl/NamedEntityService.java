@@ -1,4 +1,4 @@
-package mk.ukim.finki.web.financeproject.service;
+package mk.ukim.finki.web.financeproject.service.impl;
 
 import com.querydsl.core.types.Predicate;
 import mk.ukim.finki.web.financeproject.model.NamedEntities;
